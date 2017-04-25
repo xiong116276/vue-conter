@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title> vue做的计算器</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        #app{
+            width:300px;
+            height:360px;
+            border:1px solid #EAEAEA;
+            margin:100px auto;
+            background-color: #F8F8F8;
+            padding:0 0 15px 15px;
+            border-radius: 3px;
+        }
+        .redColor{
+            color:#FC6F6F;
+        }
+        .blueColor{
+            color:#22B5FF;
+        }
+        #app ul {
+            width:300px;
+        }
+        ul li{
+            width:300px;
+            margin-top:10px;
+        }
+        ul li:after{
+            content:"";
+            display:block;
+            clear:both;
+        }
+        ul li button{
+            float:left;
+            width:50px;
+            height:50px;
+            margin-right: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .exwidth{
+            width:110px;
+        }
+        .input{
+            width:278px;
+            padding:0 5px;
+            height:50px;
+            text-align: right;
+            border:1px solid #EAEAEA;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <ul>
+        <li><input type="text" v-model="msg" class="input" readonly></li>
+        <li>
+            <button v-on:click="clear" class="redColor">C</button>
+            <button v-on:click="toggle" class="blueColor">+/-</button>
+            <button v-on:click="baifenshu" class="blueColor">%</button>
+            <button v-on:click="shanchu" class="redColor exwidth">←</button>
+        </li>
+        <li>
+            <button v-on:click="show">7</button>
+            <button v-on:click="show">8</button>
+            <button v-on:click="show">9</button>
+            <button v-on:click="show" class="blueColor">+</button>
+            <button v-on:click="show" class="blueColor">-</button>
+        </li>
+        <li>
+            <button v-on:click="show">4</button>
+            <button v-on:click="show">5</button>
+            <button v-on:click="show">6</button>
+            <button v-on:click="show" class="blueColor">×</button>
+            <button v-on:click="show" class="blueColor">÷</button>
+        </li>
+        <li>
+            <button v-on:click="show">1</button>
+            <button v-on:click="show">2</button>
+            <button v-on:click="show">3</button>
+            <button v-on:click="pingfang" class="blueColor">×<sup>2</sup></button>
+            <button v-on:click="kaifang" class="blueColor">√</button>
+        </li>
+        <li>
+            <button v-on:click="show" class="exwidth">0</button>
+            <button v-on:click="show">.</button>
+            <button v-on:click="compute" class="redColor exwidth">=</button>
+        </li>
+    </ul>
+</div>
+<script src="js/vue.js"></script>
+<script>
+    var app = new Vue({
+        el:'#app',
+        data:{
+            msg:''
+        },
+        methods:{
+            show:function (e) {
+                var val = e.target.innerHTML;
+                this.msg +=val;
+                if((this.msg.indexOf("+")>-1) && (val == '-' || val == '×' || val == '÷')){
+                    arr=this.msg.substring(0,this.msg.length-1).split("+");
+                    console.log(arr);
+                    for(var i = 0,total = 0;i<arr.length;i++){
+                        total+=parseFloat(arr[i])
+                    }
+                    this.msg = total+val;
+                }
+                if((this.msg.indexOf("-")>0) && (val == '+' || val == '×' || val == '÷')){
+                    arr=this.msg.substring(0,this.msg.length-1).split("-");
+                    console.log(arr);
+                    for(var i = 1,total = arr[0];i<arr.length;i++){
+                        total-=parseFloat(arr[i])
+                    }
+                    this.msg = total+val;
+                }
+                if((this.msg.indexOf("×")>-1) && (val == '-' || val == '+' || val == '÷')){
+                    arr=this.msg.substring(0,this.msg.length-1).split("×");
+                    console.log(arr);
+                    for(var i = 1,total = arr[0];i<arr.length;i++){
+                        total*=parseFloat(arr[i])
+                    }
+                    this.msg = total+val;
+                }
+                if((this.msg.indexOf("÷")>-1) && (val == '+' || val == '×' || val == '-')){
+                    arr=this.msg.substring(0,this.msg.length-1).split("÷");
+                    console.log(arr);
+                    for(var i = 1,total = arr[0];i<arr.length;i++){
+                        total=total/parseFloat(arr[i])
+                    }
+                    this.msg = total+val;
+                }
+            },
+            compute:function () {
+                if(this.msg.indexOf("+")>-1){
+                    arr=this.msg.split("+");
+                    for(var i = 0,total = 0;i<arr.length;i++){
+                        total+=parseFloat(arr[i])
+                    }
+                    this.msg = total.toString();
+                }
+                if(this.msg.indexOf("-")>0){
+                    arr=this.msg.split("-");
+                    for(var i = 1,total = arr[0];i<arr.length;i++){
+                        total-=parseFloat(arr[i])
+                    }
+                    this.msg = total.toString();
+                }
+                if(this.msg.indexOf("×")>-1){
+                    arr=this.msg.split("×");
+                    for(var i = 1,total = arr[0];i<arr.length;i++){
+                        total*=parseFloat(arr[i])
+                    }
+                    this.msg = total.toString();
+                }
+                if(this.msg.indexOf("÷")>-1){
+                    arr=this.msg.split("÷");
+                    for(var i = 1,total = arr[0];i<arr.length;i++){
+                        total=total/parseFloat(arr[i])
+                    }
+                    this.msg = total.toString();
+                }
+            },
+            shanchu:function () {
+                this.msg=this.msg.substring(0,this.msg.length-1)
+            },
+            clear:function () {
+                this.msg = ''
+            },
+            baifenshu:function () {
+                this.$options.methods.compute.bind(this)();
+                this.msg=(this.msg/100).toString()
+            },
+            pingfang:function(){
+                this.$options.methods.compute.bind(this)();
+                this.msg = (parseFloat(this.msg) * parseFloat(this.msg)).toString()
+            },
+            kaifang:function () {
+                this.$options.methods.compute.bind(this)();
+                this.msg = Math.sqrt(parseFloat(this.msg)).toString()
+            },
+            toggle:function () {
+                if(parseFloat(this.msg)>0){
+                    this.msg = '-'+this.msg
+                }else if(parseFloat(this.msg)<0){
+                    this.msg = (this.msg - this.msg*2).toString()
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>
